@@ -1,7 +1,43 @@
 <template>
   <div class="audio-player">
-    <div class="audio__btn-wrap">
+    
+    <div
+      v-show="showProgressBar"
+      ref="audioProgressWrap"
+      class="audio__progress-wrap"
+      @click.stop="handleClickProgressWrap"
+    >
       <div
+        ref="audioProgress"
+        class="audio__progress"
+        :style="{
+          backgroundColor: themeColor,
+        }"
+      />
+      <div
+        ref="audioProgressPoint"
+        class="audio__progress-point"
+        :style="{
+          backgroundColor: themeColor,
+          boxShadow: `0 0 10px 0 ${themeColor}`,
+        }"
+        @panstart="handleProgressPanstart"
+        @panend="handleProgressPanend"
+        @panmove="handleProgressPanmove"
+      />
+    </div>
+
+    <div v-show="showProgressBar" class="audio__time-wrap">
+      <div class="audio__current-time">
+        {{ currentTimeFormatted }}
+      </div>
+      <div class="audio__duration">
+        {{ durationFormatted }}
+      </div>
+    </div>
+
+    <div class="audio__btn-wrap d-flex justify-content-between">
+      <!-- <div
         v-if="showPlaybackRate"
         class="audio__play-rate"
         :style="{
@@ -28,7 +64,7 @@
             </div>
           </div>
         </transition>
-      </div>
+      </div> -->
 
       <div
         v-if="showPrevButton"
@@ -47,13 +83,13 @@
       </div>
 
       <div v-if="isLoading" class="audio__play-loading">
-        <span
+        <!-- <span
           v-for="item in 8"
           :key="item"
           :style="{
             backgroundColor: themeColor,
           }"
-        />
+        /> -->
       </div>
 
       <template v-else>
@@ -106,7 +142,7 @@
         </slot>
       </div>
 
-      <div v-if="showVolumeButton" class="audio__play-volume-icon-wrap">
+      <!-- <div v-if="showVolumeButton" class="audio__play-volume-icon-wrap">
         <svg
           class="audio__play-icon"
           aria-hidden="true"
@@ -141,47 +177,13 @@
             />
           </div>
         </transition>
-      </div>
+      </div> -->
 
       <div v-show="isShowErrorMessage" class="audio__notice">
         {{ noticeMessage }}
       </div>
     </div>
 
-    <div
-      v-show="showProgressBar"
-      ref="audioProgressWrap"
-      class="audio__progress-wrap"
-      @click.stop="handleClickProgressWrap"
-    >
-      <div
-        ref="audioProgress"
-        class="audio__progress"
-        :style="{
-          backgroundColor: themeColor,
-        }"
-      />
-      <div
-        ref="audioProgressPoint"
-        class="audio__progress-point"
-        :style="{
-          backgroundColor: themeColor,
-          boxShadow: `0 0 10px 0 ${themeColor}`,
-        }"
-        @panstart="handleProgressPanstart"
-        @panend="handleProgressPanend"
-        @panmove="handleProgressPanmove"
-      />
-    </div>
-
-    <div v-show="showProgressBar" class="audio__time-wrap">
-      <div class="audio__current-time">
-        {{ currentTimeFormatted }}
-      </div>
-      <div class="audio__duration">
-        {{ durationFormatted }}
-      </div>
-    </div>
 
     <audio
       ref="audio"
@@ -602,6 +604,9 @@ export default {
 
     // 播放上一首
     playPrev() {
+      window.postMessage("prev");
+      return;
+      
       if (this.currentPlayIndex <= 0 && !this.isLoop) {
         // 无上一首了
         return
@@ -641,6 +646,9 @@ export default {
 
     // 播放下一首
     playNext() {
+      window.postMessage("next");
+      return;
+
       if (this.currentPlayIndex + 1 >= this.audioList.length && !this.isLoop) {
         // 无下一首了
         return
