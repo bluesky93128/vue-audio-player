@@ -720,6 +720,10 @@ export default {
   animation: fadeRate 0.3s reverse;
 }
 
+.audio-player {
+  background-color: #fff;
+}
+
 .audio-player .audio__btn-wrap {
   position: relative;
   display: flex;
